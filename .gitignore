@@ -1,0 +1,12 @@
+# 操作系统
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 打包产物
+*.zip
+dist/
+
+# 本地覆盖与草稿
+*.local.md
+.env
