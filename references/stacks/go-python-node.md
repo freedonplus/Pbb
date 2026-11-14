@@ -1,6 +1,8 @@
 # Go / Python / Node 体系要点
 
-Java 之外的三种常见后端，八股骨架与 Java 同构（架构 → 分层 → 数据 → 中间件 → 并发 → 安全 → 可观测 → 契约），此处只列**差异点**与必答项。
+> 数据截止：2025 年中。**每次使用前用 WebSearch 核对各语言当前稳定版与 LTS 支持状态**（Go releases / Node.js LTS schedule / Python EOL 表），文中版本号只作结构参考。
+
+Java 之外的三种常见后端，八股骨架与 Java 同构（架构 → 分层 → 数据 → 中间件 → 并发 → 安全 → 可观测 → 契约），此处只列**差异点**与必答项。Go/Python/Node 以及 PHP/C#/Rust 的详细八股与生产陷阱另见 `../bagu-polyglot.md`；AI 辅助编码必须同时加载 `../security-assurance.md`。
 
 ---
 

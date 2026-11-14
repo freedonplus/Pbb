@@ -1,23 +1,36 @@
 ---
 name: prod-backend-blueprint
-description: Plan, design, audit, or review a production-grade backend project. Use when the user wants to build a new backend, check an existing codebase against production standards, or audit a project against its own design docs. Covers architecture, stack selection, concurrency, caching, idempotency, payments, security, deployment, and API contracts. Trigger phrases include 生产级 / 生产环境 / 上线方案 / 架构方案 / 技术选型 / 后端方案 / 审核 / 上线前检查 / 帮我看看这个项目 / 是否符合规范. Three routes — existing project without a baseline gets a gap check with suggestions only, a project built by this skill gets a 340-item audit report, and a greenfield idea gets a 7-round interview plus a 12-chapter blueprint. Backend only, never touches the frontend. 中文摘要：生产级后端方案规划与审核助手，新建项目出方案书、已有项目做差距检查、本技能产出的项目做审核报告，只做后端不碰前端。
+description: Plan, design, audit, or review a production-grade backend project to big-tech standards. Covers architecture, concurrency, caching, indexing, idempotency, payments, deployment, API contracts, polyglot interview knowledge (Java/Go/Python/Node/PHP/C#/Rust), AI-assisted coding governance, human release gates, supply-chain integrity and cyber defense. Use for 生产级/上线方案/架构方案/技术选型/审核/上线前检查/八股文/vibecoding 安全/防 AI 篡改/网络攻防. Never promises zero defects; backend only, never modifies frontend.
 agent_created: true
 ---
 
 # 生产级后端方案规划
 
+## 质量门槛（世界级大厂标准，所有产出的底线）
+
+- **数字可追溯**：容量、QPS、连接数、TTL、线程池、超时、限流阈值全部给数字与推导假设，禁止「调优」「高可用」这类无参数形容词。
+- **决策三件套**：每个技术选型写「选择 / 理由 / 否决项」。
+- **八股兜底**：Java/JVM/MySQL 索引/Redis/MQ 以 `references/bagu-essentials.md` 为底稿；Go/Python/Node/PHP/C#/Rust 以 `references/bagu-polyglot.md` 为底稿，不凭印象写；底稿没有的才查外网。
+- **验收可执行**：每个 P0 项必须能写出一条可执行的验收动作（命令 / 用例 / 检查项）。
+- **风险不隐藏**：没做的、做不了的、需要外部依赖的，单列章节写明。
+- **不承诺零缺陷**：禁止输出「保证上线不出问题 / 100% 安全」；只给验证证据、覆盖范围、残余风险与止损能力。
+- **人工最终负责**：C3/C4 核心变更必须独立人工审核与放行，AI 自审或第二模型复审不能替代；详细规则见 `references/security-assurance.md`。
+
 ## 核心原则
 
 - **先问后写**：未完成提问阶段前，禁止直接输出方案。
-- **分轮提问，每轮最多 4 个**：使用 AskUserQuestion 工具；每题提供 2–4 个选项，把推荐项放在第一位并标注「（推荐）」。
-- **尊重已有信息**：当前对话、工作区代码、历史记忆中已明确的答案（如语言、框架）不重复提问，直接进入下一轮。
+- **分轮提问，每轮最多 4 个**：使用 AskUserQuestion 工具；每题提供 2–4 个选项（**工具上限 4 个，禁止超过**），把推荐项放在第一位并标注「（推荐）」。
+- **尊重已有信息**：当前对话、工作区代码、历史记忆中已明确的答案不重复提问；**用户已提供 PRD / 需求文档 / 旧方案书时，先从中抽取答案，只补问缺口**。
 - **用户放弃选择时**：用推荐值继续并在最终方案中注明「采用推荐默认」，不追问、不停滞。
 - **方案必须过检**：产出前对照 `references/production-checklist.md` 逐项查漏，凡涉及项未覆盖的必须补齐或显式说明「不适用原因」。
-- **输出必须套模板**：最终方案严格遵循 `references/plan-template.md` 的章节结构（八股文要领）。
+- **输出必须套模板**：最终方案遵循 `references/plan-template.md` 的章节骨架（骨架固定、附录可增）。
+- **产出必须打指纹**：方案书 / API 契约 / 错误码表首行写入 HTML 注释指纹 `<!-- blueprint-meta: skill=prod-backend-blueprint v2 | date=YYYY-MM-DD -->`，用于场景判定与血缘追踪。
 - **API 文档是交付物**：方案必须包含「接口契约与文档」章节（OpenAPI 方案、统一响应体、错误码表、字段规范、鉴权约定、导出/导入方式），文档与代码同源，生产环境关闭或加鉴权。
-- **前后端边界是硬规则**：后端只交付接口 + 契约文档 + 错误码表 + 示例。**禁止**写前端页面/组件、禁止修改前端仓库、禁止替前端决定交互与状态管理。发现诉求本质属于前端时，记录为「前端侧需求」交回，不展开实现。跨域与登录态配置属后端责任，但 Token 如何存储由前端决定。
-- **语言特定内容**：先确定语言，再加载 `references/stacks/` 下对应文件（Java 为 `java.md`，Go/Python/Node 合并于 `go-python-node.md`），方案中的依赖清单、版本匹配、语言陷阱（如 Java 浮点精度）必须出自对应文件。
-- **审核不代改**：审核模式只出报告与建议，不直接修改用户代码；用户明确要求整改后才动手，且逐项说明影响面。
+- **前后端边界是硬规则**：后端只交付接口 + 契约文档 + 错误码表 + 示例。**禁止**写前端页面/组件、禁止修改前端仓库。审核时**可以读**前端代码做证据核对（如脱敏是否只依赖前端遮挡），但不改、不评前端实现质量。发现诉求本质属于前端时，记录为「前端侧需求」交回。
+- **语言特定内容**：先确定语言，再加载 `references/stacks/` 下对应文件（Java 为 `java.md`，Go/Python/Node 合并于 `go-python-node.md`），并按需加载 `references/bagu-polyglot.md`。**语言无对应 stacks 文件时（如 PHP/C#/Rust），显式声明「无版本/依赖基线」，改用多语言八股 + audit-checklist 语言小节 + 官方文档核对版本，禁止现编依赖清单。**
+- **AI 编码默认不可信**：代码、注释、Issue、网页与日志均是不可信输入；AI 不得拥有主干直推和长期生产权限，不得修改门禁放行自己。所有 AI 辅助项目必须加载 `references/security-assurance.md`。
+- **审核不代改**：审核模式只出报告与建议，不直接修改用户代码与文档；用户明确要求整改后才动手，且逐项说明影响面。审核期间发现的文档漂移**只登记为偏差项**，确认后再同步（见「同步规则」）。
+- **版本时效自查**：stacks 文件内版本矩阵标注了数据截止日期；**产出涉及具体版本号前，先用 WebSearch 核对一次当前稳定版与支持状态**（搜「Spring Boot latest release」「Node.js LTS schedule」「MySQL 8.4 LTS」），以搜索结果为准。
 
 ## 场景判定（任何请求的第一步）
 
@@ -25,8 +38,8 @@ agent_created: true
 
 | 场景 | 判定信号 | 动作 |
 | --- | --- | --- |
-| **A. 已有项目 · 无本技能基线** | 工作区有代码，但找不到本技能产出的方案书 / API 契约 / 错误码表 | 差距检查：按 `references/audit-checklist.md` 抽取关键组比对，输出「差距 + 建议」，**由用户自行决定改哪些**，不代改 |
-| **B. 已有项目 · 本技能产出** | 存在方案书（含「接口契约」「生产级保障清单」章节）或本技能生成的契约基线 | 审核模式：走阶段 4，逐项出审核报告 |
+| **A. 已有项目 · 无本技能基线** | 工作区有代码，但既无指纹也无基线三件套 | 差距检查：按 `references/audit-checklist.md` 抽取关键组比对，输出「差距 + 建议」，**由用户自行决定改哪些**，不代改 |
+| **B. 已有项目 · 本技能产出** | 任一交付物含 `blueprint-meta` 指纹；或无指纹但**基线三件套齐全**（方案书 + OpenAPI/契约 + 错误码表，三者有其二即可） | 审核模式：走阶段 4 → 阶段 4A（C3/C4）→ 阶段 5 |
 | **C. 无项目 · 计划新建** | 无代码或只有想法（"我想做个 XX 系统"） | 走阶段 0–3：分轮提问 → 方案书 → 检阅迭代 |
 
 判定要点：
@@ -35,6 +48,7 @@ agent_created: true
 - 场景 A 禁止直接改代码，也不要把差距写成「必须整改」，一律表述为「建议项」，并问用户「要按哪几项整改」。
 - 场景 B 若发现基线本身与最佳实践冲突，单列为「基线问题」，与实现问题分开统计，不混入开发者缺陷。
 - 用户只贴一段代码问「这样行不行」时，也按场景 A 处理：点到为止给建议，不展开全量审核，除非用户要求。
+- 多服务 / 多仓库 / 多语言仓库：先与用户确认审核范围（哪个服务、哪层），按单服务处理并在报告头部写清范围；不默认全仓审核。
 
 ## 工作流（严格按顺序执行）
 
@@ -42,48 +56,69 @@ agent_created: true
 从用户输入或工作区推断语言；无法推断时作为第一轮的第一个问题。语言决定后续问题集与 stacks 参考文件。
 
 ### 阶段 1 · 分轮提问
-按 `references/interview.md` 的轮次执行：规模与架构 → 框架与版本 → 数据层 → 中间件与异步 → 业务风险面 → 安全与合规 → 交付与前端协作。
-- 根据前面回答动态裁剪后续问题（例如选了「纯内部工具」可跳过支付轮；选了「无状态 API」可跳过分布式锁细节）。
-- 每轮开场用一句话说明本轮目的，再调用 AskUserQuestion。
-- 全部轮次结束后，用一张紧凑的「决策回执表」（问题 → 用户选择 → 推导结论）向用户复述，确认无误再进入写作。推导规则见 `references/decision-matrix.md`。
+按 `references/interview.md` 的轮次执行。极小型项目（MVP/个人项目/毕设演示）走该文件末尾的 **lite 路径（3 轮）**。
 
 ### 阶段 2 · 撰写方案
-1. 加载语言对应的 stacks 参考：`references/stacks/java.md` 或 `references/stacks/go-python-node.md`。
-2. 按 `references/plan-template.md` 的章节骨架撰写；技术决策必须给出「选择 + 理由 + 否决项（为什么不选备选）」三件套。
-3. 章节「生产级保障清单」必须与 `references/production-checklist.md` 对齐，按 P0/P1/P2 标注。
-4. 涉及并发、缓存、幂等、支付、加密的结论必须与 `references/decision-matrix.md` 的规则一致；偏离时显式说明理由。
-5. 「接口契约与文档」章节为必写项，写完自检：契约可导出、可导入、字段规范齐全、生产已收敛。
+1. 加载语言对应的 stacks 参考。
+2. 按 `references/plan-template.md` 的章节骨架撰写；Java/通用原理引自 `references/bagu-essentials.md`，其他语言引自 `references/bagu-polyglot.md`。
+3. 「生产保障」与「落地优先级与风险」两章与 `references/production-checklist.md` 对齐，按 P0/P1/P2 标注。
+4. 并发、缓存、幂等、支付、加密的结论与 `references/decision-matrix.md` 一致；偏离时显式说明理由。
+5. 「接口契约与文档」为必写；「缓存决策矩阵」与「索引设计」在有缓存/数据库时必写，写清哪些数据用缓存、哪些不用及理由。
+6. 「安全体系」必须包含威胁建模/Abuse Case、核心业务不变量、AI 变更防篡改、人工放行、网络与运行时防护、入侵响应；按 `references/security-assurance.md` 给出证据与验收动作。
+7. 首行写指纹注释；版本从 v1.0 起。
 
 ### 阶段 3 · 检阅与迭代
 - 把方案完整呈现给用户（长文落盘为 Markdown 文件并 present_files，不要只贴在对话里）。
-- 明确请用户检阅：「以上方案请检阅，指出要调整的章节」。
-- 用户提出修改 → 局部修订并重新呈现差异；用户确认后定稿。
-- 定稿后询问是否进入实施（脚手架/建表/接口编码），不要默认开始写代码。
+- 用户确认后定稿；定稿后询问是否进入实施，不要默认开始写代码。
 
 ### 阶段 4 · 审核（场景 B；场景 A 复用同一清单但只出建议）
 
-1. **建基线**：读方案书、OpenAPI、错误码表，记下各自的版本号与日期；基线缺失的先说明缺哪几份，再继续。
-2. **逐组过清单**（`references/audit-checklist.md`）：Part 1 通用二十四组 → Part 2 攻击面六组 → Part 3 取语言对应小节（Java/Go/Python/Node/C#/PHP/Rust/SQL）→ Part 4 取项目实际用到的中间件小节。不适用的组整组跳过并留一句理由。
-3. **每条带证据**：`文件:行号` / 接口路径 / 配置项名 / SQL / 命令输出。三态判定：通过 / 不通过 / 不适用（附理由）。无法验证的标「待验证」，**不得臆断为通过**。
-4. **分级**：阻断 P0（安全、资金、数据丢失、不可回滚发布）/ 建议 P1 / 记录 P2。
-5. **出报告**：按清单 Part 5 模板输出，落盘 Markdown 并 present_files，同时在对话里给结论摘要（通过率、阻断项数、最小可上线集）。
-6. **不代改**：报告结束后问「要整改哪些项」，用户勾选后按阻断 → 建议顺序处理，每项改动前说明影响面与回滚方式。
+1. **建基线**：读方案书、OpenAPI、错误码表，记下版本号与日期；基线缺失的先说明缺哪几份，再继续。
+2. **定覆盖**：先按项目画像（业务类型 / 中间件 / 语言 / 暴露面 / 是否 AI 辅助）计算本次**必查组**，在报告中显式声明「本次覆盖率 = 已核查项 / 全量 384 项」。**禁止用「通过率」冒充「全量核查」**：通过率分母只用已核查项。大仓库（>200 个类）必须分批：先结构性扫描（grep 模式清单见 audit-checklist Part 0），再定点读文件；可用多个并行只读探索代理分担，但结论汇总必须由主流程完成。
+3. **逐组过清单**（`references/audit-checklist.md`）：Part 1 通用组 → Part 2 攻击面 → Part 3 语言专项 → Part 4 中间件。不适用组整组跳过并留一句理由；AI 辅助项目的 AA/AB/AC/AD 四组不得跳过。
+4. **每条带证据**：`文件:行号` / 接口路径 / 配置项名 / SQL / 命令输出。四态判定：通过 / 部分通过 / 不通过 / 待验证（附缺什么证据）；不适用整组处理并给理由。
+5. **去重归属**：同一缺陷命中多组时，只归入**最具体的那个组**，其余组标「见 <ID>」，报告按 ID 计数，不重复扣分。
+6. **分级**：阻断 P0（安全、资金/资损、数据丢失、合规违规、无备份单点、不可回滚发布）/ 建议 P1 / 记录 P2。
+7. **出技术审核报告**：按清单 Part 5 模板输出，落盘 Markdown 并 present_files；结论先过**技术门禁**（见 Part 6）：任一 P0 未闭环 → 不可上线；P0 全闭环且 P1 ≤ 用户接受数 → 有条件上线；否则进入人工放行。C3/C4 的最终结论以阶段 4A 为准。
+8. **不代改**：报告结束后问「要整改哪些项」，用户勾选后按阻断 → 建议顺序处理，每项改动前说明影响面与回滚方式。
 
-### 实时同步（审核与整改期间强制，不攒到最后）
+### 阶段 4A · 人工安全放行（C3/C4 强制）
 
-- **API 文档**：端点新增/字段变更/错误码变更/接口废弃，**当场**更新 OpenAPI 与错误码表；示例值同步改为可真实调通的值。
-- **方案书**：实现偏离方案时先登记偏差（章节 / 原计划 / 实际 / 原因 / 影响面），再按用户选择回写章节。
-- **变更记录**：每次同步更新方案书版本号 + 日期 + 变更点 + 影响范围，让人能看出「哪天因为什么改了什么」。
-- 审核报告末尾固定记一行：`本次同步：API 文档 n 处 / 方案书 n 处 / 未同步 n 处（原因）`，避免出现代码改了文档没改的静默漂移。
+1. 按 `security-assurance.md` 判定变更级别；核心业务、权限、支付退款、密钥、CI/CD、生产配置至少为 C3/C4。
+2. 收集业务负责人 + 安全/技术负责人的独立评审证据，C4 另需发布负责人；AI 不得代签。
+3. 核对核心业务不变量、反例/并发/重放测试、威胁建模与 Abuse Case、灰度/kill switch/回滚证据。
+4. 输出人工放行单：commit/制品 digest、签字人、未覆盖项、残余风险、例外到期日、值班人。
+5. 放行单缺失或证据不足 → 「不可上线（流程阻断）」；不得用扫描通过率抵消。
+
+### 阶段 5 · 复评（整改完成后强制）
+
+1. 逐项复核已整改条目：重新取证据（新代码位置 / 新测试结果），标注「已闭环 / 未闭环」。
+2. 全量重跑与整改项相关的组（如改了退款逻辑 → 重跑支付与资金组）。
+3. 出新版报告（文件名带日期与序号），保留上一版结论与 diff（已修复 n / 新增 n / 遗留 n）。
+4. 结论按门禁重新判定；同步更新方案书版本号与变更记录。
+
+### 同步规则（审核与整改期间）
+
+- **审核期只登记**：发现实现与文档/方案不一致，先在报告「偏差登记」一节记录（章节 / 原计划 / 实际 / 原因 / 影响面），**不当场改文档**——审核不代改优先。
+- **整改期当场同步**：用户确认整改后，API 文档、错误码表、方案书随代码变更当场更新，示例值同步改为可真实调通的值。
+- **变更记录**：每次同步更新方案书版本号 + 日期 + 变更点 + 影响范围，写在方案书「版本与变更记录」章。
+- 审核报告末尾固定记一行：`本次同步：API 文档 n 处 / 方案书 n 处 / 未同步 n 处（原因）`。
+
+## 边界声明（必须写进每份审核报告）
+
+本技能输出的是**基于已获取证据的工程审核**结果：静态审核不构成渗透测试结论，自动化测试与人工评审也都不能证明不存在未知缺陷、0day 或业务误解。「可上线 / 有条件上线」只是在声明范围内的工程建议，不是零故障、零漏洞或不可入侵承诺；上线决策与责任归项目方，残余风险必须由责任人签收。
 
 ## 参考文件索引
 
 | 文件 | 何时加载 |
 | --- | --- |
-| `references/interview.md` | 阶段 1 全程 |
-| `references/decision-matrix.md` | 阶段 1 推导结论、阶段 2 撰写并发/缓存/幂等/支付章节时 |
+| `references/interview.md` | 阶段 1 全程（含 lite 路径） |
+| `references/decision-matrix.md` | 阶段 1 推导结论、阶段 2 撰写并发/缓存/索引/幂等/支付章节时 |
 | `references/production-checklist.md` | 阶段 2 查漏、产出 P0/P1/P2 清单时 |
-| `references/audit-checklist.md` | 场景 A 差距检查、阶段 4 审核全程（340 条 / 41 组，含攻击面、9 种语言、6 类中间件、报告模板） |
+| `references/audit-checklist.md` | 场景 A 差距检查、阶段 4–5 全程（384 条 / 50 组，含 AI 防篡改、人工放行、攻击面、8 组语言、6 类中间件、报告模板与门禁） |
 | `references/plan-template.md` | 阶段 2 全程 |
+| `references/bagu-essentials.md` | Java 基础、JVM、MySQL 索引、Redis、MQ、分布式原理（对标 JavaGuide） |
+| `references/bagu-polyglot.md` | Go/Python/Node/PHP/C#/Rust 八股与生产陷阱，阶段 2/4 按语言加载 |
+| `references/security-assurance.md` | AI 辅助编码、C3/C4、核心业务、安全体系、人工放行与网络攻防时必载 |
 | `references/stacks/java.md` | 用户语言为 Java / Kotlin / Spring 时 |
 | `references/stacks/go-python-node.md` | 用户语言为 Go / Python / Node 时 |
