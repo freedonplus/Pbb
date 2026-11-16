@@ -3,12 +3,12 @@
 最终方案按以下章节顺序产出。**骨架章节不可删**（不适用的章节写「不适用 + 原因」），**允许新增附录**（附录 A 起，放最后）。每章密度要求：有结论、有参数、有理由，不写空话。
 
 产出文件首行必须写指纹注释（HTML 注释，渲染不可见）：
-`<!-- blueprint-meta: skill=prod-backend-blueprint v2 | date=YYYY-MM-DD -->`
+`<!-- blueprint-meta: skill=prod-backend-blueprint v3 | date=YYYY-MM-DD -->`
 
 ---
 
 ```markdown
-<!-- blueprint-meta: skill=prod-backend-blueprint v2 | date=YYYY-MM-DD -->
+<!-- blueprint-meta: skill=prod-backend-blueprint v3 | date=YYYY-MM-DD -->
 # <项目名> 生产级后端方案
 
 > 版本 v1.0 · 日期 YYYY-MM-DD · 语言/框架：<Java 21 + Spring Boot 3.5> ｜ 架构：<多模块单体>
@@ -164,7 +164,7 @@
 5. **语言陷阱显式提醒**：Java 金额用 `BigDecimal`、ID 字符串化等，列入对应章节，不靠读者自觉。
 6. **不越界**：前端页面、交互、组件一律不写；只给契约与联调约定。
 7. **长度**：中小型 3000–8000 字，中大型 8000–20000 字；超长时优先用表格压缩，不要堆段落。低于下限视为「没写透」，回去补参数与否决项。
-8. **可验收**：每个 P0 项配一条可执行验收动作；写不出验收动作的条目不算 P0。
+8. **可验收 + 可判定**：每个 P0 项配一条可执行验收动作**与一条合格线（阈值）**；阈值取自 `acceptance-thresholds.md`。写不出验收动作或合格线的条目不算 P0，降为 P1。
 9. **原理有出处**：Java/JVM/索引/缓存/MQ 以 `bagu-essentials.md` 为底稿；Go/Python/Node/PHP/C#/Rust 以 `bagu-polyglot.md` 为底稿。
 10. **AI 不自我放行**：AI 辅助项目必须写变更风险级别、独立人工评审、核心业务不变量与发布链防篡改；缺一项不得判可上线。
 11. **不承诺零故障**：方案只声明验证范围与残余风险，不写「绝对安全」「上线后不会出问题」。

@@ -42,14 +42,14 @@
 
 本轮目的：锁定语言版本、框架版本、是否用快速开发框架、依赖基线。
 
-1. **语言版本**（按第 1 轮语言给出推荐）
-   - Java：JDK 21 LTS（推荐，可用虚拟线程）/ JDK 17 LTS（生态最稳）/ JDK 8（遗留兼容）
+1. **语言版本**（按第 1 轮语言给出推荐；版本号随发布节奏变化，**推荐前用 WebSearch 核对当前 LTS 与支持期**）
+   - Java：JDK 21 LTS（推荐，虚拟线程可用）/ JDK 25 LTS（最新 LTS，生态跟进中）/ JDK 17 LTS（保守）/ JDK 8（遗留兼容，新项目禁用）
    - Go：最新稳定版（推荐）
-   - Python：3.12+（推荐）/ 3.10+
-   - Node：Node 20 LTS（推荐）/ Node 22 LTS
+   - Python：3.13+（推荐）/ 3.12（保守）；3.9 及以下已 EOL，禁用
+   - Node：Node 24 LTS（推荐，支持至 2028-04）/ Node 22 LTS（维护期，至 2027-04）；**Node 20 已于 2026-04-30 EOL，新项目禁用**
 
 2. **框架版本**（按语言）
-   - Java：Spring Boot 3.x（推荐，需 JDK17+）/ Spring Boot 2.7（JDK8 兼容）/ Spring Cloud（微服务时必选）
+   - Java：Spring Boot 3.5.x（推荐，需 JDK17+）/ Spring Boot 4.x（新增主线，采用前核对 release notes 与生态兼容）/ Spring Boot 2.7（遗留专用，已结束免费支持，新项目禁止）/ Spring Cloud（微服务时必选）
    - Go：Gin（推荐）/ Go-Zero（微服务）/ Kratos（B 站系微服务）
    - Python：FastAPI（推荐）/ Django + DRF
    - Node：NestJS（推荐）/ Express/Koa（仅小项目）
@@ -71,7 +71,8 @@
 本轮目的：数据库选型、ORM、分库分表策略。
 
 1. **主数据库**
-   - MySQL 8（推荐）：生态最成熟、团队最熟悉
+   - MySQL 8.4 LTS（推荐）：生态最成熟、团队最熟悉，支持期最长
+   - MySQL 8.0（存量兼容）：2026-04 已 EOL，仅限既有系统，新项目不选
    - PostgreSQL：复杂查询/GIS/JSONB 需求强时
    - SQL Server / Oracle：企业存量约束
    - SQLite/嵌入式：仅单机小工具
