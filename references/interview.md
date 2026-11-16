@@ -43,13 +43,13 @@
 本轮目的：锁定语言版本、框架版本、是否用快速开发框架、依赖基线。
 
 1. **语言版本**（按第 1 轮语言给出推荐；版本号随发布节奏变化，**推荐前用 WebSearch 核对当前 LTS 与支持期**）
-   - Java：JDK 21 LTS（推荐，虚拟线程可用）/ JDK 25 LTS（最新 LTS，生态跟进中）/ JDK 17 LTS（保守）/ JDK 8（遗留兼容，新项目禁用）
+   - Java：JDK 25 LTS（最新 LTS，含虚拟线程 pinning 修复 JEP 491）/ JDK 21 LTS（推荐，生态最稳）/ JDK 17 LTS（保底）/ JDK 8（遗留兼容，新项目禁用）
    - Go：最新稳定版（推荐）
    - Python：3.13+（推荐）/ 3.12（保守）；3.9 及以下已 EOL，禁用
    - Node：Node 24 LTS（推荐，支持至 2028-04）/ Node 22 LTS（维护期，至 2027-04）；**Node 20 已于 2026-04-30 EOL，新项目禁用**
 
-2. **框架版本**（按语言）
-   - Java：Spring Boot 3.5.x（推荐，需 JDK17+）/ Spring Boot 4.x（新增主线，采用前核对 release notes 与生态兼容）/ Spring Boot 2.7（遗留专用，已结束免费支持，新项目禁止）/ Spring Cloud（微服务时必选）
+2. **框架版本**（按语言；**核对日期 2026-11-16**）
+   - Java：**Spring Boot 4.1.x（推荐，OSS 支持至 2027-07-31；需 JDK 17+，推荐 21/25）** / Spring Boot 4.0.x（2026-12-31 结束 OSS，仅过渡） / Spring Boot 3.5.x（**OSS 已于 2026-06-30 结束**，仅商业支持，新项目禁用） / Spring Boot 2.7（遗留专用，禁止）
    - Go：Gin（推荐）/ Go-Zero（微服务）/ Kratos（B 站系微服务）
    - Python：FastAPI（推荐）/ Django + DRF
    - Node：NestJS（推荐）/ Express/Koa（仅小项目）

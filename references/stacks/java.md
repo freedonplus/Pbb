@@ -1,18 +1,24 @@
 # Java / Spring 体系要点
 
-> 数据截止：2025 年中。**每次使用前必须用 WebSearch 核对当前稳定版**（搜「Spring Boot latest」「JDK LTS」「Spring Cloud release train」），本表只作结构参考。
+> 数据截止：**2026-11-16**（已核对 Spring Boot / JDK / MySQL / Redis / RabbitMQ / MyBatis-Plus / Sa-Token 的支持状态）。**每次使用前必须用 WebSearch 核对当前稳定版**（搜「Spring Boot latest」「JDK LTS」「Spring Cloud release train」），本表只作结构参考。
 
 ## 版本匹配（必须成对给，错配是启动即失败的高频原因）
 
 | Spring Boot | JDK | Spring Cloud | 备注 |
 | --- | --- | --- | --- |
-| 4.x 线 | 21 / 25 | 2025.x | 新一代主线；升级前核对其 release notes |
-| 3.4.x / 3.5.x | 17 / 21 / 25 | 2024.x / 2025.x | 保守主线；3.2/3.3 已出 OSS 支持期，新项目不选 |
+| **4.1.x（推荐）** | 21 / 25 | 2025.x | OSS 支持至 **2027-07-31**；Spring Framework 7 + Jakarta EE 11，包名全部 `jakarta.*` |
+| 4.0.x | 21 / 25 | 2025.x | OSS 于 **2026-12-31** 结束，只做过渡 |
+| 3.5.x | 17 / 21 / 25 | 2024.x / 2025.x | **OSS 已于 2026-06-30 结束**（商业支持至 2032），新项目禁用 |
 | 2.7.x | 8 / 11 | 2021.0.x | 遗留系统专用；免费支持已结束，新项目禁止 |
 
-- JDK 选型：LTS 线优先（17 → 21 → 25）；21 起虚拟线程（`spring.threads.virtual.enabled=true`）适合 IO 密集型；CPU 密集型收益有限，且需注意 `synchronized` 钉住载体线程（JDK 24+ 已改善）。
-- Spring Boot 3 起 `javax.*` → `jakarta.*`；引入旧依赖会编译不过，这是升级最常见坑。
-- MySQL 选型：8.0 线已近支持尾声，新部署优先 8.4 LTS；客户端 `mysql-connector-j` 版本随服务端核对。
+- JDK 选型：LTS 线优先（17 → 21 → 25）；21 起虚拟线程（`spring.threads.virtual.enabled=true`）适合 IO 密集型；CPU 密集型收益有限。**JDK 21 上 `synchronized` 会钉住载体线程（JEP 491 在 25 才修）**，虚拟线程场景下锁一律用 `ReentrantLock`。
+- Spring Boot 3 起 `javax.*` → `jakarta.*`；4.x 进一步清理兼容层，旧第三方库（停留在 `javax`）会在运行期 `NoClassDefFoundError`。
+- **中间件版本（核对日期 2026-11-16，均需按官方支持期复核）**：
+  - MySQL：**8.4 LTS**（8.0 已于 2026-04 EOL）；客户端 `mysql-connector-j` 随服务端核对。
+  - Redis：**8.2.x**（8.0 于 2026-12-01 EOL，且有 2026 年 CVE 无公开修复）。
+  - RabbitMQ：**4.3.7 / 4.4.x**（**4.1 社区支持 2026-01-30 结束、4.2 于 2026-07-31 结束**，新项目不可用）。
+  - MyBatis-Plus：**3.5.16+**（Spring Boot 4 需 `mybatis-plus-spring-boot4-starter`，3.5.14 及更早仍有兼容问题；分页另需 `mybatis-plus-jsqlparser`）。
+  - Sa-Token：**1.46.0**（Boot 4 用 `sa-token-spring-boot4-starter`；与 Redisson 集成有已知 Redis 过期时间 issue，改用 `sa-token-redis-template`）。
 
 ## 必要依赖基线（按需裁剪，不用的删）
 
@@ -25,7 +31,8 @@ spring-boot-starter-actuator
 
 <!-- 数据 -->
 spring-boot-starter-jdbc
-mybatis-plus-spring-boot3-starter          <!-- 或 spring-boot-starter-data-jpa -->
+mybatis-plus-spring-boot4-starter 3.5.16+   <!-- Boot 4 专用坐标；boot3 starter 在 Boot 4 下自动配置不生效 -->
+mybatis-plus-jsqlparser                     <!-- 分页拦截器自 3.5.9 起拆出，版本需与 starter 一致 -->
 mysql-connector-j
 flyway-core + flyway-mysql                 <!-- 版本化迁移 -->
 
@@ -34,7 +41,7 @@ spring-boot-starter-data-redis
 redisson-spring-boot-starter               <!-- 分布式锁 + 布隆过滤器 -->
 
 <!-- 认证 -->
-sa-token-spring-boot3-starter + sa-token-redis-jackson   <!-- 轻量方案 -->
+sa-token-spring-boot4-starter + sa-token-redis-template   <!-- 1.46.0；勿用 sa-token-redisson（Boot 4 有已知 issue） -->
 <!-- 或 spring-boot-starter-security + jjwt -->
 
 <!-- 文档 -->

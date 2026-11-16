@@ -3,12 +3,12 @@
 最终方案按以下章节顺序产出。**骨架章节不可删**（不适用的章节写「不适用 + 原因」），**允许新增附录**（附录 A 起，放最后）。每章密度要求：有结论、有参数、有理由，不写空话。
 
 产出文件首行必须写指纹注释（HTML 注释，渲染不可见）：
-`<!-- blueprint-meta: skill=prod-backend-blueprint v3 | date=YYYY-MM-DD -->`
+`<!-- blueprint-meta: skill=prod-backend-blueprint v4 | date=YYYY-MM-DD -->`
 
 ---
 
 ```markdown
-<!-- blueprint-meta: skill=prod-backend-blueprint v3 | date=YYYY-MM-DD -->
+<!-- blueprint-meta: skill=prod-backend-blueprint v4 | date=YYYY-MM-DD -->
 # <项目名> 生产级后端方案
 
 > 版本 v1.0 · 日期 YYYY-MM-DD · 语言/框架：<Java 21 + Spring Boot 3.5> ｜ 架构：<多模块单体>
