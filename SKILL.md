@@ -1,6 +1,6 @@
 ---
 name: prod-backend-blueprint
-description: Plan, design, audit, or review a production-grade backend project to big-tech standards. Judgment-style verification with numeric acceptance thresholds and an anti-pattern library, covering architecture, concurrency, caching, indexing, idempotency, payments, deployment, API contracts, polyglot interview knowledge (Java/Go/Python/Node/PHP/C#/Rust), AI-assisted coding governance, human release gates, supply-chain integrity and cyber defense. Use for 生产级/上线方案/架构方案/技术选型/审核/上线前检查/判定式审核/合格线/阈值/八股文/vibecoding 安全/防 AI 篡改/网络攻防. Never promises zero defects; backend only, never modifies frontend.
+description: Plan, design, audit, or review a production-grade backend project to big-tech standards. Judgment-style verification with numeric acceptance thresholds and a 20-pattern anti-pattern library, covering architecture, concurrency, caching, indexing, idempotency, payments, deployment, API contracts, polyglot interview knowledge (Java/Go/Python/Node/PHP/C#/Rust), AI-assisted coding governance, human release gates, supply-chain integrity, cyber defense, service-to-service auth, registry/config governance, SLO and error budgets, capacity and full-chain load testing, distributed transactions, schema/message compatibility during rollout, third-party continuity, and LLM output-side safety. Use for 生产级/上线方案/架构方案/技术选型/审核/上线前检查/判定式审核/合格线/阈值/SLO/错误预算/服务治理/全链路压测/分布式事务/灰度兼容/LLM 安全/八股文/vibecoding 安全/防 AI 篡改/网络攻防. Never promises zero defects; backend only, never modifies frontend.
 agent_created: true
 ---
 
@@ -10,13 +10,14 @@ agent_created: true
 
 - **数字可追溯**：容量、QPS、连接数、TTL、线程池、超时、限流阈值全部给数字与推导假设，禁止「调优」「高可用」这类无参数形容词。
 - **判定式结论**：每条结论必须写全「判定对象 / 合格线（阈值）/ 实测值 / 证据 / 判定」，规范见 `references/verification-standard.md`，门槛值取 `references/acceptance-thresholds.md`。**只写「已设置超时」「已配置幂等」不算结论**——要写清各层超时值与「下游 < 上游」的验证结果。写不出合格线的项，降级为 P1，不得当 P0 交付。
+- **运行层要有结论**：对外服务必须给出 SLO / 错误预算与容量 / 压测基线（见清单 AG、AH 组）；三者缺失时禁止使用「高可用」「生产级」这类定性形容词，只能写「按内部系统标准交付，SLO 与容量结论缺失，补做计划见 X」。治理与容量不是「后续优化」，是上线判据的一部分。
 - **决策三件套**：每个技术选型写「选择 / 理由 / 否决项」。
 - **八股兜底**：Java/JVM/MySQL 索引/Redis/MQ 以 `references/bagu-essentials.md` 为底稿；Go/Python/Node/PHP/C#/Rust 以 `references/bagu-polyglot.md` 为底稿，不凭印象写；底稿没有的才查外网。
 - **验收可执行**：每个 P0 项必须能写出一条可执行的验收动作（命令 / 用例 / 检查项）。
 - **风险不隐藏**：没做的、做不了的、需要外部依赖的，单列章节写明。
 - **不承诺零缺陷**：禁止输出「保证上线不出问题 / 100% 安全」；只给验证证据、覆盖范围、残余风险与止损能力。
-- **通过率不是安全度**：380 条核查项全部通过，只代表「清单覆盖到的机制存在且达标」，不代表系统无漏洞。清单不是 OWASP ASVS 认证、不是渗透测试、也不是大厂生产体系的等价物。报告中禁止把通过率写成「安全覆盖率」或「安全度 95%」；该说法的正确定义是「已核查范围内的机制达标率」。
-- **查错优先于查缺**：清单天然只能判「有没有」，判定时必须再追问「是否有效」。逐条对照 `references/verification-standard.md` 的 14 种反例（超时倒挂、幂等无兜底、权限注解脱漏、脱敏在前端、备份没演练、熔断永不触发、限流可绕过、索引失效、唯一索引与软删冲突、审计可删、密钥与密文同库、CI 空转、灰度无判据、缓存错序）；命中即按「部分通过或不通过」处理，并在报告中标注模式编号。
+- **通过率不是安全度**：442 条核查项全部通过，只代表「清单覆盖到的机制存在且达标」，不代表系统无漏洞。清单不是 OWASP ASVS 认证、不是渗透测试、也不是大厂生产体系的等价物。报告中禁止把通过率写成「安全覆盖率」或「安全度 95%」；该说法的正确定义是「已核查范围内的机制达标率」。
+- **查错优先于查缺**：清单天然只能判「有没有」，判定时必须再追问「是否有效」。逐条对照 `references/verification-standard.md` 的 20 种反例（超时倒挂、幂等无兜底、权限注解脱漏、脱敏在前端、备份没演练、熔断永不触发、限流可绕过、索引失效、唯一索引与软删冲突、审计可删、密钥与密文同库、CI 空转、灰度无判据、缓存错序、内网裸信、SLO 空转、压测污染、灰度不兼容、重试放大、输出直渲）；命中即按「部分通过或不通过」处理，并在报告中标注模式编号。
 - **人工最终负责**：C3/C4 核心变更必须独立人工审核与放行，AI 自审或第二模型复审不能替代；详细规则见 `references/security-assurance.md`。
 
 ## 核心原则
@@ -27,7 +28,7 @@ agent_created: true
 - **用户放弃选择时**：用推荐值继续并在最终方案中注明「采用推荐默认」，不追问、不停滞。
 - **方案必须过检**：产出前对照 `references/production-checklist.md` 逐项查漏，凡涉及项未覆盖的必须补齐或显式说明「不适用原因」。
 - **输出必须套模板**：最终方案遵循 `references/plan-template.md` 的章节骨架（骨架固定、附录可增）。
-- **产出必须打指纹**：方案书 / API 契约 / 错误码表首行写入 HTML 注释指纹 `<!-- blueprint-meta: skill=prod-backend-blueprint v3 | date=YYYY-MM-DD -->`，用于场景判定与血缘追踪。
+- **产出必须打指纹**：方案书 / API 契约 / 错误码表首行写入 HTML 注释指纹 `<!-- blueprint-meta: skill=prod-backend-blueprint v4 | date=YYYY-MM-DD -->`，用于场景判定与血缘追踪。
 - **API 文档是交付物**：方案必须包含「接口契约与文档」章节（OpenAPI 方案、统一响应体、错误码表、字段规范、鉴权约定、导出/导入方式），文档与代码同源，生产环境关闭或加鉴权。
 - **前后端边界是硬规则**：后端只交付接口 + 契约文档 + 错误码表 + 示例。**禁止**写前端页面/组件、禁止修改前端仓库。审核时**可以读**前端代码做证据核对（如脱敏是否只依赖前端遮挡），但不改、不评前端实现质量。发现诉求本质属于前端时，记录为「前端侧需求」交回。
 - **语言特定内容**：先确定语言，再加载 `references/stacks/` 下对应文件（Java 为 `java.md`，Go/Python/Node 合并于 `go-python-node.md`），并按需加载 `references/bagu-polyglot.md`。**语言无对应 stacks 文件时（如 PHP/C#/Rust），显式声明「无版本/依赖基线」，改用多语言八股 + audit-checklist 语言小节 + 官方文档核对版本，禁止现编依赖清单。**
@@ -64,7 +65,7 @@ agent_created: true
 ### 阶段 2 · 撰写方案
 1. 加载语言对应的 stacks 参考。
 2. 按 `references/plan-template.md` 的章节骨架撰写；Java/通用原理引自 `references/bagu-essentials.md`，其他语言引自 `references/bagu-polyglot.md`。
-3. 「生产保障」与「落地优先级与风险」两章与 `references/production-checklist.md` 对齐，按 P0/P1/P2 标注。
+3. 「生产保障」与「落地优先级与风险」两章与 `references/production-checklist.md` 对齐，按 P0/P1/P2 标注；「生产保障」必须写全六项运行层内容——SLO 与错误预算、容量与压测（含数据隔离）、服务治理（注册/配置/网关/服务间鉴权）、灰度期兼容、第三方依赖与连续性、LLM 输出安全（无则写不适用），不得只写「日志+监控+部署」三行。
 4. 并发、缓存、幂等、支付、加密的结论与 `references/decision-matrix.md` 一致；偏离时显式说明理由。
 5. 「接口契约与文档」为必写；「缓存决策矩阵」与「索引设计」在有缓存/数据库时必写，写清哪些数据用缓存、哪些不用及理由。
 6. 「安全体系」必须包含威胁建模/Abuse Case、核心业务不变量、AI 变更防篡改、人工放行、网络与运行时防护、入侵响应；按 `references/security-assurance.md` 给出证据与验收动作。
@@ -78,12 +79,12 @@ agent_created: true
 ### 阶段 4 · 审核（场景 B；场景 A 复用同一清单但只出建议）
 
 1. **建基线**：读方案书、OpenAPI、错误码表，记下版本号与日期；基线缺失的先说明缺哪几份，再继续。
-2. **定覆盖**：先按项目画像（业务类型 / 中间件 / 语言 / 暴露面 / 是否 AI 辅助）计算本次**必查组**，在报告中显式声明「本次覆盖率 = 已核查项 / 全量 380 核查项」（元规则 4 条不计入）。**禁止用「通过率」冒充「全量核查」**：通过率分母只用已核查项。大仓库（>200 个类）必须分批：先结构性扫描（grep 模式清单见 audit-checklist Part 0），再定点读文件；可用多个并行只读探索代理分担，但结论汇总必须由主流程完成。
-3. **逐组过清单**（`references/audit-checklist.md`）：Part 1 通用组 → Part 2 攻击面 → Part 3 语言专项 → Part 4 中间件。不适用组整组跳过并留一句理由；AI 辅助项目的 AA/AB/AC/AD 四组不得跳过。
-4. **每条带证据且必须可判定**：按 `verification-standard.md` 五要素出结论——判定对象 / 合格线（阈值）/ 证据 / 反例排除 / 判定。证据为 `文件:行号` / 接口路径 / 配置项名 / SQL / 命令输出；同时给出**实测值**与门槛对比。四态判定：通过 / 部分通过 / 不通过 / 待验证（附缺什么证据）；不适用整组处理并给理由。**命中反例库 14 种模式之一的，不得判「通过」**，须标模式编号（如「H-01 命中 #1 超时倒挂」）。
+2. **定覆盖**：先按项目画像（业务类型 / 中间件 / 语言 / 暴露面 / 是否微服务 / 是否 AI 辅助 / 是否含 LLM 功能）计算本次**必查组**，在报告中显式声明「本次覆盖率 = 已核查项 / 全量 442 核查项」（元规则 4 条不计入）。**禁止用「通过率」冒充「全量核查」**：通过率分母只用已核查项。大仓库（>200 个类）必须分批：先结构性扫描（grep 模式清单见 audit-checklist Part 0），再定点读文件；可用多个并行只读探索代理分担，但结论汇总必须由主流程完成。
+3. **逐组过清单**（`references/audit-checklist.md`）：Part 1 通用组 → Part 2 攻击面 → Part 3 语言专项 → Part 4 中间件 → **Part 5 治理补缺（AE–AL）**。不适用组整组跳过并留一句理由；AI 辅助项目的 AA/AB/AC/AD 四组不得跳过；微服务 / 多服务协作 / 对外服务项目的 AE–AK 不得跳过；含 LLM 功能的项目 AL 不得跳过。
+4. **每条带证据且必须可判定**：按 `verification-standard.md` 五要素出结论——判定对象 / 合格线（阈值）/ 证据 / 反例排除 / 判定。证据为 `文件:行号` / 接口路径 / 配置项名 / SQL / 命令输出；同时给出**实测值**与门槛对比。四态判定：通过 / 部分通过 / 不通过 / 待验证（附缺什么证据）；不适用整组处理并给理由。**命中反例库 20 种模式之一的，不得判「通过」**，须标模式编号（如「H-01 命中 #1 超时倒挂」）。
 5. **去重归属**：同一缺陷命中多组时，只归入**最具体的那个组**，其余组标「见 <ID>」，报告按 ID 计数，不重复扣分。
 6. **分级**：阻断 P0（安全、资金/资损、数据丢失、合规违规、无备份单点、不可回滚发布）/ 建议 P1 / 记录 P2。
-7. **出技术审核报告**：按清单 Part 5 模板输出（阻断/建议项表含「合格线 / 实测值 / 判定」三列），落盘 Markdown 并 present_files；报告头部声明判定规范与阈值表版本、项目化调整项、反例命中统计。结论先过**技术门禁**（见 Part 6）：任一 P0 未闭环 → 不可上线；P0 全闭环且 P1 ≤ 用户接受数 → 有条件上线；否则进入人工放行。C3/C4 的最终结论以阶段 4A 为准。
+7. **出技术审核报告**：按清单 Part 6 模板输出（阻断/建议项表含「合格线 / 实测值 / 判定」三列），落盘 Markdown 并 present_files；报告头部声明判定规范与阈值表版本、项目化调整项、反例命中统计，并单列**运行层结论**（SLO / 错误预算 / 压测基线 / 容量水位，缺则写补做计划与责任人）。结论先过**技术门禁**（见 Part 7）：任一 P0 未闭环 → 不可上线；P0 全闭环且 P1 ≤ 用户接受数 → 有条件上线；否则进入人工放行。C3/C4 的最终结论以阶段 4A 为准。
 8. **不代改**：报告结束后问「要整改哪些项」，用户勾选后按阻断 → 建议顺序处理，每项改动前说明影响面与回滚方式。
 
 > **判定一致性抽检（必做，≥ 30 条）**：随机抽 30 条，由两名审核人（或两次独立判定）对同一系统分别下结论，分歧率 > 10% 说明条目定义不清，**先修条目再出报告**。单人项目用反向抽检替代：随机取 20 条已判「通过」的条目，逐条对照 `verification-standard.md` 反例库复核，命中率 > 15% 则该轮「通过」结论整体不可信，需重审。流程见 `verification-standard.md` §5。
@@ -114,7 +115,7 @@ agent_created: true
 
 本技能输出的是**基于已获取证据的工程审核**结果：静态审核不构成渗透测试结论，自动化测试与人工评审也都不能证明不存在未知缺陷、0day 或业务误解。「可上线 / 有条件上线」只是在声明范围内的工程建议，不是零故障、零漏洞或不可入侵承诺；上线决策与责任归项目方，残余风险必须由责任人签收。
 
-**能力边界（不得对外宣称超出此范围）**：本技能主要覆盖四层防线中的**实现层**（编码、配置、依赖、接口契约、AI 变更治理），**设计层**（威胁建模评审、架构对抗推演）与**运行层**（SLO/错误预算治理、混沌工程、红蓝对抗、值班与 on-call 体系）只做提醒、不替代；服务治理（注册中心/配置中心、服务间鉴权、分布式事务）、全链路压测与影子库、容量与成本治理**不在覆盖范围内**，需另行评估。因此「380 条全部通过」既不等于「达到大厂生产级」，也不等于「挡住了大部分安全问题」——它只等于「清单覆盖到的机制存在且达标」。
+**能力边界（不得对外宣称超出此范围）**：本技能主要覆盖四层防线中的**实现层**（编码、配置、依赖、接口契约、AI 变更治理）；对**设计层**与**运行层**提供条目级检查（Part 5：服务间鉴权、注册/配置中心、SLO/错误预算、容量与全链路压测、分布式事务、灰度期兼容、第三方连续性、LLM 输出侧安全），但只检查「有没有定义、参数是否合理、证据是否在」，**不替代实际运行**——混沌工程、红蓝对抗、值班与 on-call 体系、真实压测执行、SLO 长期治理仍需另行组织。因此「442 条全部通过」既不等于「达到大厂生产级」，也不等于「挡住了大部分安全问题」——它只等于「清单覆盖到的机制存在且达标」。
 
 ## 参考文件索引
 
@@ -123,9 +124,9 @@ agent_created: true
 | `references/interview.md` | 阶段 1 全程（含 lite 路径） |
 | `references/decision-matrix.md` | 阶段 1 推导结论、阶段 2 撰写并发/缓存/索引/幂等/支付章节时 |
 | `references/production-checklist.md` | 阶段 2 查漏、产出 P0/P1/P2 清单时 |
-| `references/audit-checklist.md` | 场景 A 差距检查、阶段 4–5 全程（380 核查项 + 4 元规则 / 50 组，每条带 S/R/P 证据等级；含 AI 防篡改、人工放行、攻击面、8 组语言、6 类中间件、报告模板与门禁） |
-| `references/verification-standard.md` | 阶段 2 写 P0、阶段 4 出结论、阶段 5 复评全程（判定五要素、证据分级、**14 种反例库**、一致性校验、可脚本化扫描项） |
-| `references/acceptance-thresholds.md` | 阶段 2 写合格线、阶段 4 比对阈值时（A/B/C/D/E/F/G/H/I/J/K/M/O/Q/R/S/T/AA/AB/AC 组的具体门槛值、证据、典型不合格） |
+| `references/audit-checklist.md` | 场景 A 差距检查、阶段 4–5 全程（442 核查项 + 4 元规则 / 58 组，每条带 S/R/P 证据等级；含 AI 防篡改、人工放行、攻击面、8 组语言、6 类中间件、8 组治理补缺、报告模板与门禁） |
+| `references/verification-standard.md` | 阶段 2 写 P0、阶段 4 出结论、阶段 5 复评全程（判定五要素、证据分级、**20 种反例库**、一致性校验、可脚本化扫描项） |
+| `references/acceptance-thresholds.md` | 阶段 2 写合格线、阶段 4 比对阈值时（A–AC 及 AE–AL 组的具体门槛值、证据、典型不合格） |
 | `references/plan-template.md` | 阶段 2 全程 |
 | `references/bagu-essentials.md` | Java 基础、JVM、MySQL 索引、Redis、MQ、分布式原理（对标 JavaGuide） |
 | `references/bagu-polyglot.md` | Go/Python/Node/PHP/C#/Rust 八股与生产陷阱，阶段 2/4 按语言加载 |
